@@ -46,9 +46,7 @@ def update_pattern(chosen_word, masked, guess):
     return masked
 
 
-# Step 3: Game functionality, asking for player input!
 
-guess = input("Please make a guess: ").lower() # Standardise everything to lowercase
 
 # We need a function that checks if the guess is valid, it should return true or false to test the guess.
 def valid_guess(guess, secret_word):
@@ -94,12 +92,21 @@ while wants_to_play == "y":
     masked = mask_word(secret_word)
     wrong_letters = []
     round_won = False
+    user_quit = False
+    print("Welcome to Hangman! Your goal is to guess the word correctly within 5 attempts.")
+    print("You may input a single letter or full word guess!")
+    print("If you wish to quit the game input quit or exit")
 
     # Main game logic loop 
     while attempts > 0 and "_" in masked:
         print(" ".join(masked))
         print(f"Attempts left: {attempts}")
         guess = input("Please make a guess: ").lower()
+
+        # I want to add the option to quit the game midway
+        if guess in ["quit","exit"]:
+            user_quit = True
+            break
 
         # Lets check that the input is valid
         if not valid_guess(guess, secret_word):
@@ -125,6 +132,10 @@ while wants_to_play == "y":
                 attempts -= 1
 
     # Round finished
+    if user_quit:
+        print("Game ended early")
+        break # if they want to quit, no need to continue running the code
+
     total_games += 1
 
     if "_" not in masked:
