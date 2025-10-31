@@ -16,6 +16,10 @@ A simple text-based Hangman game written in Python. Players must guess a randoml
 3. Open the hangman_game.py file in the code editor.
 4. Run the game in the code editor terminal with "python AdeshGurung_Hangman_game.py"
 
+## Gameplay demo
+
+![Hangman Gameplay](AdeshGurung_Hangman_game_walkthrough.gif)
+
 ## How to play the game
 The game displays the hidden word as underscores.
 
