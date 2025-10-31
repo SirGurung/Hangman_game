@@ -118,6 +118,7 @@ while wants_to_play == "y":
         if len(guess) == len(secret_word):
             #This is the instance of a whole word guess
             if guess == secret_word:
+                round_won = True
                 print("Correct Guess! You have won!")
                 break # End the loop, because you won
             else:
