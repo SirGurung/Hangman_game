@@ -1,29 +1,57 @@
+"""
+Hangman Game - Project Submission by Adesh Gurung
 
-# This is a python script made by Adesh Gurung with the purpose of creating a hangman game for a Rockborne project submission.
+This module implements a simple text-based Hangman game. It includes
+functions to select a random word, create a masked pattern, update the
+pattern based on player guesses, and validate input. The main loop handles
+attempt tracking, win/loss detection, and replay logic.
 
-# The general outline should be as follows:
+"""
 
-# Print Welcome to the game, and then the rules of the game; the objective, the number of attempts
+# ----------------
+# Library / Package imports
+# ----------------
 
 import random
 
-# Step 1: Create a global list of words that will be used.
+# ----------------
+# List of potential words
+# ----------------
 
 potential_words = ["turkey", "horse", "albania", "ford", "screen"]
 
 
-# Step 2: Create functions that will select a word, mask a word, update masks based on successful guesses.
+# ----------------
+# Function defintions
+# ----------------
 
-# A function that randomly selects a word, from a potential list of words.
 def select_word():
-    # choose random word from potential_words
+    """
+    Select and return a random word from the available list of potential_words
+
+    returns:
+        str: a randomly chosen word, in lowercase, just for standardisation reasons 
+    
+    """
     chosen_word = random.choice(potential_words)
     # convert to lowercase & return said word
     return(chosen_word.lower())
     
-# A function that takes the chosen_word and masks the letters with underscores.
+
 def mask_word(chosen_word):
-    # Create a variable for the masked word
+    """
+    A function that takes the chosen_word and masks the letters with underscores.
+
+    Each letter is replaced with an underscore, this creates a sort of mask of the chosen word.
+    Allowing the player to be able to start guessing what the word is, and what letters are missing
+
+    Arg:
+        chosen_word: so this was the randomly chosen word that the select_word function returns
+
+    returns:
+        list: a list of underscores that represents the hidden letters
+
+    """
     masked = []
 
     # Count the length of the word
@@ -35,9 +63,22 @@ def mask_word(chosen_word):
     
     return masked
 
-# A function that will update the masked word, based on successful guesses of letters.
+
 def update_pattern(chosen_word, masked, guess):
+    """ 
+    A function that will reveal positions of a correctly guessed letter in the masked pattern.
+
+    This function goes through the chosen word, and will update the masked pattern whenever the
+    guess matches the letter that is in the position
+
+    args:
+        chosen_word: the full word that is being guessed
+        masked_word: the current masked pattern that represents revealed and hidden letters
+
+    returns:
+        list: the updated masked pattern after any successful matches
     
+    """
     # Go through the index of the chosen word
     for index in range(len(chosen_word)): # Using the range we determine how many times to loop this part
         if chosen_word[index] == guess: # when the letter associated with the index is equal to the guess
@@ -49,8 +90,21 @@ def update_pattern(chosen_word, masked, guess):
 
 
 # We need a function that checks if the guess is valid, it should return true or false to test the guess.
-def valid_guess(guess, secret_word):
+def valid_guess(guess, chosen_word):
+    """ 
+    This function will validate the player's guess input
+
+    I do this because I do not want to accept invalid inputs, such as:
+    1. Non alphabetical characters; @!-7 etc
+    2. It should be a one letter guess or the whole word, nothing else!
+
+    args:
+        guess: this is the single letter or word, that the player will guess upon being prompted
+        chosen_Word: This is the secret word, used for length comparisons
     
+    retunrs:
+        boolean: this function checks if a condition is true or false, and returns either one
+    """
     # Must not be empty
     if len(guess) == 0:
         return False
@@ -64,16 +118,16 @@ def valid_guess(guess, secret_word):
         return True
 
     # Full-word guess matching secret_word length is valid
-    if len(guess) == len(secret_word):
+    if len(guess) == len(chosen_word):
         return True
 
     # Otherwise invalid
     return False
 
 
-# Step 4: Variable set up
-
-# We have the functions, now we need to utilise them to generate variables for the game.
+# ----------------
+# Main game loop
+# ----------------
 
 # Global Statistics
 total_games = 0
@@ -88,8 +142,8 @@ while wants_to_play == "y":
 # Setting up a single round
     attempts = 5
     guess_count = 0
-    secret_word = select_word()
-    masked = mask_word(secret_word)
+    chosen_word = select_word()
+    masked = mask_word(chosen_word)
     wrong_letters = []
     round_won = False
     user_quit = False
@@ -109,7 +163,7 @@ while wants_to_play == "y":
             break
 
         # Lets check that the input is valid
-        if not valid_guess(guess, secret_word):
+        if not valid_guess(guess, chosen_word):
             print("Invalid input!")
             continue
 
@@ -117,14 +171,14 @@ while wants_to_play == "y":
 
         if len(guess) == 1:
             #This is a branching point, distinguishing if we have a single letter guess.
-            if guess in secret_word:
-                update_pattern(secret_word, masked, guess)
+            if guess in chosen_word:
+                update_pattern(chosen_word, masked, guess)
             else:
                 attempts -= 1
 
-        if len(guess) == len(secret_word):
+        if len(guess) == len(chosen_word):
             #This is the instance of a whole word guess
-            if guess == secret_word:
+            if guess == chosen_word:
                 round_won = True
                 print("Correct Guess! You have won!")
                 break # End the loop, because you won
@@ -146,7 +200,7 @@ while wants_to_play == "y":
         print("Congratulations!")
     else:
         losses += 1
-        print(f"You lost! The word was: {secret_word}")
+        print(f"You lost! The word was: {chosen_word}")
 
     # Play again
     ans = input("Play again? (y/n): ").strip().lower()
