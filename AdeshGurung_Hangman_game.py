@@ -77,49 +77,77 @@ def valid_guess(guess, secret_word):
 
 # We have the functions, now we need to utilise them to generate variables for the game.
 
-secret_word = select_word()
-masked = mask_word(secret_word)
-attempts = 5
-guess_count = 0
+# Global Statistics
+total_games = 0
+wins = 0
+losses = 0
 
-# Step 5: The main game mechanic
-
-# What do I need to do here is ... set up the main loop logic, which is while there are attempts, keep asking for input
-
-# Using a while loop, because I want the game to run, given a condition is true
-while attempts > 0 and "_" in masked:
-    print(" ".join(masked))
-    print(f"Attempts left: {attempts}")
-    guess = input("Please make a guess: ").lower()
-
-    # Lets check that the input is valid
-    if not valid_guess(guess, secret_word):
-        print("Invalid input!")
-        continue
-
-    if len(guess) == 1:
-        #This is a branching point, distinguishing if we have a single letter guess.
-        if guess in secret_word:
-            update_pattern(secret_word, masked, guess)
-        else:
-            attempts -= 1
-
-    if len(guess) == len(secret_word):
-        #This is the instance of a whole word guess
-        if guess == secret_word:
-            print("Correct Guess! You have won!")
-            break # End the loop, because you won
-        else:
-            attempts -= 1
+# Initiate the play loop by setting the default of wants_to_play to yes
+wants_to_play = "y"
 
 
-# If one of the two conditions are not met in the main loop above, the code will run and a check will occur:
+while wants_to_play == "y":
+# Setting up a single round
+    attempts = 5
+    guess_count = 0
+    secret_word = select_word()
+    masked = mask_word(secret_word)
+    wrong_letters = []
+    round_won = False
 
-# Did the loop not start because all the letters in the masked word were guessed?
-if "_" not in masked:
-    print("Congratulations! Word is guessed")
-else:
-    print(f"You lost! The word was: {secret_word}")
+    # Main game logic loop 
+    while attempts > 0 and "_" in masked:
+        print(" ".join(masked))
+        print(f"Attempts left: {attempts}")
+        guess = input("Please make a guess: ").lower()
+
+        # Lets check that the input is valid
+        if not valid_guess(guess, secret_word):
+            print("Invalid input!")
+            continue
+
+        guess_count += 1
+
+        if len(guess) == 1:
+            #This is a branching point, distinguishing if we have a single letter guess.
+            if guess in secret_word:
+                update_pattern(secret_word, masked, guess)
+            else:
+                attempts -= 1
+
+        if len(guess) == len(secret_word):
+            #This is the instance of a whole word guess
+            if guess == secret_word:
+                print("Correct Guess! You have won!")
+                break # End the loop, because you won
+            else:
+                attempts -= 1
+
+    # Round finished
+    total_games += 1
+
+    if "_" not in masked:
+        round_won = True
+
+    if round_won:
+        wins += 1
+        print("Congratulations!")
+    else:
+        losses += 1
+        print(f"You lost! The word was: {secret_word}")
+
+    # Play again
+    ans = input("Play again? (y/n): ").strip().lower()
+    if not ans.startswith("y"):
+        break
+
+# Print statistics after loop ends
+print(f"Total games: {total_games}")
+print(f"Wins: {wins}")
+print(f"Losses: {losses}")
+
+
+
 
 
     
